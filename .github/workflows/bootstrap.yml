@@ -1,11 +1,5 @@
 name: Bootstrap piattaforma Android
 
-# Eseguire questo workflow UNA VOLTA, a mano, dalla tab "Actions" del
-# repository (Bootstrap piattaforma Android -> Run workflow), per generare
-# la cartella android/ che Flutter richiede per compilare un APK. Le build
-# successive (vedi build-apk.yml) partono da quello che questo workflow
-# genera e committa. Va rieseguito solo se si vuole rigenerare android/ da
-# zero (per esempio dopo un aggiornamento importante di Flutter).
 on:
   workflow_dispatch: {}
 
@@ -25,7 +19,13 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          # Versione fissata (non "channel: stable") e IDENTICA in
+          # bootstrap.yml e build-apk.yml. Le versioni recenti di Flutter
+          # generano solo Gradle in Kotlin DSL (build.gradle.kts) e
+          # "flutter build apk" su quella toolchain ha fallito cercando il
+          # vecchio build.gradle Groovy (vedi docs/ARCHITETTURA.md sez. 7).
+          # 3.24.x genera Gradle in Groovy classico: elimina il problema.
+          flutter-version: '3.24.x'
 
       - name: Backup dei file scritti a mano (pubspec.yaml, lib/)
         run: |
