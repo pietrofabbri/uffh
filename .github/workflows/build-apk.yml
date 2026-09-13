@@ -1,5 +1,10 @@
 name: Build APK
 
+# Compila un APK di debug (installabile via "sideload", nessuna firma di
+# release richiesta) a ogni push su main, e lo allega come artifact
+# scaricabile dalla pagina della run in Actions. Richiede che
+# bootstrap.yml sia gia' stato eseguito almeno una volta (deve esistere
+# la cartella android/).
 on:
   push:
     branches: [ main ]
@@ -21,6 +26,8 @@ jobs:
           flutter-version: '3.24.x'
 
       - run: flutter pub get
+
+      - run: flutter test
 
       - run: flutter clean
 

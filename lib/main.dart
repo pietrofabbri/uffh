@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
+import 'models/progress.dart';
 import 'screens/home_screen.dart';
 
 void main() {
-  runApp(const AllenamentoApp());
+  runApp(AllenamentoApp(progress: ProgressController()));
 }
 
 class AllenamentoApp extends StatelessWidget {
-  const AllenamentoApp({super.key});
+  final ProgressController progress;
+
+  const AllenamentoApp({super.key, required this.progress});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +20,7 @@ class AllenamentoApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const HomeScreen(),
+      home: HomeScreen(progress: progress),
     );
   }
 }

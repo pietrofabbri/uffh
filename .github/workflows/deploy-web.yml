@@ -1,0 +1,59 @@
+name: Deploy Web (anteprima)
+
+# Pubblica una versione web dell'app su GitHub Pages a ogni push su main,
+# cosi' si puo' provare l'ultima versione aprendo un URL nel browser (dal
+# telefono o dal computer) senza scaricare/installare nulla ogni volta —
+# alternativa piu' pratica al ciclo "scarica APK -> sideload" per provare
+# rapidamente le modifiche all'interfaccia durante lo sviluppo.
+#
+# Richiede che la cartella web/ esista (bootstrap.yml con
+# --platforms=android,web) e che GitHub Pages sia abilitato su questo
+# repository: Settings -> Pages -> Source: "GitHub Actions" (passo
+# manuale, va fatto una volta sola).
+#
+# NB: e' un'ANTEPRIMA per provare l'interfaccia rapidamente da browser,
+# non sostituisce l'APK Android per l'uso reale — alcune funzionalita'
+# future (es. la sincronizzazione Google Drive) potrebbero comportarsi
+# diversamente sul web rispetto ad Android.
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.x'
+
+      - run: flutter pub get
+
+      - run: flutter build web --release --base-href /uffh/
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: build/web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

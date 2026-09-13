@@ -1,5 +1,12 @@
-name: Bootstrap piattaforma Android
+name: Bootstrap piattaforme Android e Web
 
+# Eseguire questo workflow a mano dalla tab "Actions" del repository
+# (Bootstrap piattaforme Android e Web -> Run workflow) per generare le
+# cartelle android/ e web/ che Flutter richiede per compilare
+# rispettivamente l'APK (build-apk.yml) e l'anteprima browser
+# (deploy-web.yml). E' idempotente: rieseguirlo con la stessa versione di
+# Flutter rigenera gli stessi file (nessuna modifica reale ad android/ se
+# non e' cambiato nulla) e aggiunge solo cio' che manca ancora.
 on:
   workflow_dispatch: {}
 
@@ -21,26 +28,32 @@ jobs:
         with:
           flutter-version: '3.24.x'
 
-      - name: Backup dei file scritti a mano (pubspec.yaml, lib/)
+      - name: Backup dei file scritti a mano (pubspec.yaml, lib/, test/)
         run: |
           mkdir -p /tmp/backup
           cp pubspec.yaml /tmp/backup/pubspec.yaml
           cp -r lib /tmp/backup/lib
+          if [ -d test ]; then cp -r test /tmp/backup/test; fi
 
-      - name: Genera la piattaforma Android mancante
+      - name: Genera le piattaforme mancanti (Android, Web)
         run: |
-          flutter create --platforms=android --org com.pietrofabbri.allenamento --project-name allenamento .
+          flutter create --platforms=android,web --org com.pietrofabbri.allenamento --project-name allenamento .
 
       - name: Ripristina i file scritti a mano
         run: |
           cp /tmp/backup/pubspec.yaml pubspec.yaml
           rm -rf lib
           cp -r /tmp/backup/lib lib
+          # "flutter create" scriverebbe qui un test/widget_test.dart di
+          # default (che referenzia un widget contatore inesistente nel
+          # nostro codice): lo sostituiamo sempre con i nostri test.
+          rm -rf test
+          if [ -d /tmp/backup/test ]; then cp -r /tmp/backup/test test; fi
 
       - name: Commit della piattaforma generata
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          git diff --cached --quiet || git commit -m "Bootstrap: genera la piattaforma Android (flutter create)"
+          git diff --cached --quiet || git commit -m "Bootstrap: genera le piattaforme Android e Web (flutter create)"
           git push
