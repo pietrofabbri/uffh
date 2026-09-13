@@ -18,14 +18,15 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          # Deve restare IDENTICA alla versione in bootstrap.yml.
           flutter-version: '3.24.x'
+
+      - run: flutter --version
 
       - run: flutter pub get
 
       - run: flutter clean
 
-      - run: flutter build apk --debug
+      - run: flutter build apk --debug --verbose
 
       - uses: actions/upload-artifact@v4
         with:
