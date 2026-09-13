@@ -20,13 +20,11 @@ jobs:
         with:
           flutter-version: '3.24.x'
 
-      - run: flutter --version
-
       - run: flutter pub get
 
       - run: flutter clean
 
-      - run: flutter build apk --debug --verbose
+      - run: flutter build apk --debug
 
       - uses: actions/upload-artifact@v4
         with:
