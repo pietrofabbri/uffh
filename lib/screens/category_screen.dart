@@ -82,14 +82,19 @@ class CategoryScreen extends StatelessWidget {
   String _subtitleFor(Exercise exercise, ExerciseStatus status) {
     final equipmentLabel = exercise.equipment.map((e) => e.label).join(' + ');
     if (status != ExerciseStatus.locked) return equipmentLabel;
-    return '$equipmentLabel — richiede: ${_prerequisiteName(exercise)}';
+    return '$equipmentLabel — richiede: ${_prerequisiteNames(exercise)}';
   }
 
-  String _prerequisiteName(Exercise exercise) {
-    final prerequisiteId = exercise.prerequisiteId;
-    if (prerequisiteId == null) return '';
-    final match = exercises.where((e) => e.id == prerequisiteId);
-    return match.isEmpty ? prerequisiteId : match.first.name;
+  /// I nomi di TUTTI i prerequisiti (possono essere più di uno — vedi
+  /// docs/ARCHITETTURA.md sezione 10 — e possono appartenere a categorie
+  /// diverse da questa schermata, quindi si cercano in [seedExercises],
+  /// non nella lista [exercises] filtrata per categoria).
+  String _prerequisiteNames(Exercise exercise) {
+    if (exercise.prerequisiteIds.isEmpty) return '';
+    return exercise.prerequisiteIds.map((id) {
+      final match = seedExercises.where((e) => e.id == id);
+      return match.isEmpty ? id : match.first.name;
+    }).join(' + ');
   }
 }
 

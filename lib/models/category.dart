@@ -14,6 +14,7 @@ enum FitnessCategory {
   gambe,
   flessibilita,
   equilibrio,
+  acrobazie,
 }
 
 extension FitnessCategoryLabel on FitnessCategory {
@@ -38,16 +39,21 @@ extension FitnessCategoryLabel on FitnessCategory {
         return 'Flessibilita\'';
       case FitnessCategory.equilibrio:
         return 'Equilibrio';
+      case FitnessCategory.acrobazie:
+        return 'Acrobazie';
     }
   }
 }
 
-/// Attrezzatura effettivamente disponibile per l'allenamento: solo
-/// pavimento, un muro libero, e una fascia elastica (niente piu'
-/// taniche/bottiglie). Un esercizio puo' richiedere piu' di un elemento
-/// (es. "verticale al muro" richiede sia corpoLibero che muro).
+/// Attrezzatura OLTRE al corpo che un esercizio puo' richiedere: un muro
+/// libero, e/o una fascia elastica (niente piu' taniche/bottiglie). Il
+/// corpo stesso non e' un valore qui: e' sempre disponibile per
+/// definizione, quindi non e' mai un vincolo di filtro reale. Un insieme
+/// VUOTO significa "solo corpo libero, nessun'altra attrezzatura". Un
+/// esercizio puo' richiedere piu' di un elemento (es. "verticale al
+/// muro" richiede Equipment.muro, oltre al corpo che e' sempre
+/// implicito).
 enum Equipment {
-  corpoLibero,
   muro,
   fasciaElastica,
 }
@@ -55,8 +61,6 @@ enum Equipment {
 extension EquipmentLabel on Equipment {
   String get label {
     switch (this) {
-      case Equipment.corpoLibero:
-        return 'Corpo libero';
       case Equipment.muro:
         return 'Muro';
       case Equipment.fasciaElastica:

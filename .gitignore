@@ -27,3 +27,6 @@ ios/Pods/
 .DS_Store
 .vscode/
 .idea/
+
+# Log locali di `flutter run` (es. flutter_01.log) — non vanno committati
+flutter_*.log

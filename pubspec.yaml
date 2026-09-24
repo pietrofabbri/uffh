@@ -13,11 +13,24 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
+  # Voce che descrive l'esercizio e annuncia i secondi (sessione guidata,
+  # vedi docs/ARCHITETTURA.md sezione 9): sintesi vocale del telefono, in
+  # italiano, nessun servizio esterno.
+  flutter_tts: ^4.0.0
+  # Riproduzione dei due toni di sincronizzazione respiro
+  # (assets/audio/inspiro.wav, espiro.wav).
+  audioplayers: ^6.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  # Solo per tool/import_free_exercise_db.dart (script offline, non
+  # parte dell'app): scarica il dataset esercizi da rigenerare a mano
+  # ogni tanto, non ogni build.
+  http: ^1.2.0
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/audio/
